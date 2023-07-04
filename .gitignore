@@ -36,5 +36,3 @@ lerna-debug.log*
 
 #dotenv file
 .env
-
-/src/config/typeorm.config.ts

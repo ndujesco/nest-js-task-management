@@ -15,7 +15,6 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipes';
-import { Task } from './task.entity';
 
 @Controller('tasks')
 export class TasksController {
@@ -28,17 +27,16 @@ export class TasksController {
   //   return this.taskService.getAllTasks();
   // }
 
-  @Get('/:id')
-  getTaskById(@Param('id', ParseIntPipe)  id: number): Promise<Task> {
+  // @Get('/:id')
+  // getTaskById(@Param('id', ParseIntPipe)  id: number) {    
     
-    return this.taskService.getTaskById(id);
-  }
-
-  // @Post()
-  // @UsePipes(ValidationPipe)
-  // createTask(@Body() createTaskDto: CreateTaskDto): Task {
-  //   return this.taskService.createTask(createTaskDto);
   // }
+
+//   @Post()
+//   @UsePipes(ValidationPipe)
+//  createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+//     return this.taskService.createTask(createTaskDto);
+//   }
 
   // @Delete('/:id')
   // deleteTaskById(@Param('id') id: string): Task {
