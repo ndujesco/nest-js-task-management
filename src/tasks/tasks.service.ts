@@ -2,9 +2,12 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
 import { TaskStatus } from "./task-status.enum";
+import { PrismaService } from "prisma/prima.client";
 
 @Injectable()
 export class TasksService {
+
+  constructor(private readonly prismaService: PrismaService) {}
 
   // getAllTasks(): Task[] {
   //   return this.tasks;
@@ -32,12 +35,12 @@ export class TasksService {
   //     throw new NotFoundException(`There is no task with id ${id}`);
   //   }
  
-  //   return found;
+  //   return found;S
   // }
 
-  // async createTask({ title, description }: CreateTaskDto): Promise<Task> {
- 
-  // }
+  async createTask({ title, description }: CreateTaskDto) {
+   await this.prismaService.task.create({data: {title, description, status: TaskStatus.OPEN}})
+  }
 
   // deleteTaskById(id: string): Task {
   //   const found = this.getTaskById(id);
