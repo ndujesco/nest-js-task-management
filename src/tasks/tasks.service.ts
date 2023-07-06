@@ -8,7 +8,7 @@ import { Task, TaskStatus } from "@prisma/client";
 export class TasksService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getTasks({status, search}: GetTasksFilterDto) {
+  async getTasks({ status, search }: GetTasksFilterDto) {
     let tasks = await this.prismaService.task.findMany();
     if (status) {
       tasks = tasks.filter((task) => task.status === status);
@@ -16,9 +16,8 @@ export class TasksService {
     if (search) {
       tasks = tasks.filter(
         (task) =>
-          task.description.includes(search) || task.title.includes(search),
+          task.description.includes(search) || task.title.includes(search)
       );
-      
     }
     return tasks;
   }
@@ -42,7 +41,7 @@ export class TasksService {
   //   return tasks;
   // }
 
-  async getTaskById(id: number): Promise<Task | NotFoundException> {
+  async getTaskById(id: number) {
     const found = await this.prismaService.task.findUnique({ where: { id } });
     return this.foundOrNot(found, `There is no task with id ${id}`);
   }
@@ -54,33 +53,31 @@ export class TasksService {
     return created;
   }
 
-  async deleteTaskById(id: number): Promise<Task | NotFoundException> {
-    const found = await this.prismaService.task.deleteMany({ where: { id } });
+  async deleteTaskById(id: number) {
+    const found = (await this.prismaService.task.deleteMany({
+      where: { id }
+    })) as { count: number };
 
-    return this.foundOrNot(found[0], `There is no task with id ${id}`);
+    return this.foundOrNot(found.count, `There is no task with id ${id}`);
   }
 
-  async updateTaskStatus(
-    id: number,
-    status: TaskStatus
-  ): Promise<Task | NotFoundException> {
-    const found = await this.prismaService.task.updateMany({
+  async updateTaskStatus(id: number, status: TaskStatus) {
+    const found = (await this.prismaService.task.updateMany({
       where: { id },
       data: { status }
-    });
+    })) as { count: number };
+
     return this.foundOrNot(
-      found[0],
+      found.count,
       `There is no task with id ${id} to update`
     );
   }
 
-  foundOrNot(
-    task: Task | null | undefined,
-    message: string
-  ): Task | NotFoundException {
+  foundOrNot(task, message: string) {
     if (!task) {
       throw new NotFoundException(message);
     }
-    return task;
+    if (task !== 1) return task; //
+    return {task}
   }
 }
