@@ -9,27 +9,26 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
-  ParseIntPipe
+  ParseIntPipe,
 } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
 import { TaskStatusValidationPipe } from "./pipes/task-status-validation.pipes";
-import { Task } from "@prisma/client";
+import { TaskStatus } from "@prisma/client";
+// import { Task, TaskStatus } from "@prisma/client";
 
 @Controller("tasks")
 export class TasksController {
   constructor(private taskService: TasksService) {}
 
-  // @Get()
-  // getTasks(@Query(ValidationPipe) filterDto: GetTasksFilterDto): Task[] {
-  //   if (Object.keys(filterDto).length)
-  //     return this.taskService.getTasksWithFilters(filterDto);
-  //   return this.taskService.getAllTasks();
-  // }
+  @Get()
+  getTasks(@Query(ValidationPipe) filterDto: GetTasksFilterDto) {
+   return this.taskService.getTasks(filterDto)
+  }
 
   @Get("/:id")
-  getTaskById(@Param("id", ParseIntPipe) id: number): Promise<Task> {
+  getTaskById(@Param("id", ParseIntPipe) id: number) {
     return this.taskService.getTaskById(id);
   }
 
@@ -39,16 +38,16 @@ export class TasksController {
     return this.taskService.createTask(body);
   }
 
-  // @Delete('/:id')
-  // deleteTaskById(@Param('id') id: string): Task {
-  //   return this.taskService.deleteTaskById(id);
-  // }
+  @Delete("/:id")
+  deleteTaskById(@Param("id", ParseIntPipe) id: number){
+    return this.taskService.deleteTaskById(id);
+  }
 
-  // @Patch('/:id/status')
-  // updateTaskStatus(
-  //   @Param('id') id: string,
-  //   @Body('status', TaskStatusValidationPipe) status: TaskStatus,
-  // ): Task {
-  //   return this.taskService.updateTaskStatus(id, status);
-  // }
+  @Patch('/:id/status')
+  updateTaskStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('status', TaskStatusValidationPipe) status: TaskStatus,
+  ){
+    return this.taskService.updateTaskStatus(id, status);
+  }
 }

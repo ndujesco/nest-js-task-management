@@ -6,8 +6,12 @@ import { Task, TaskStatus } from "@prisma/client";
 
 @Injectable()
 export class TasksService {
-
   constructor(private readonly prismaService: PrismaService) {}
+
+  async getTasks({status,}: GetTasksFilterDto) {
+    const tasks = await this.prismaService.task
+    return {tasks}
+  }
 
   // getAllTasks(): Task[] {
   //   return this.tasks;
@@ -28,28 +32,45 @@ export class TasksService {
   //   return tasks;
   // }
 
+  async getTaskById(id: number): Promise<Task | NotFoundException> {
+    const found = await this.prismaService.task.findUnique({ where: { id } });
+    return this.foundOrNot(found, `There is no task with id ${id}`);
+  }
 
-  async getTaskById(id: number): Promise<Task>  {
-    const found = await this.prismaService.task.findUnique({where: {id}})
-    if (!found) {
-      throw new NotFoundException(`There is no task with id ${id}`);
+  async createTask({ title, description }: CreateTaskDto): Promise<Task> {
+    const created = await this.prismaService.task.create({
+      data: { title, description, status: TaskStatus.OPEN }
+    });
+    return created;
+  }
+
+  async deleteTaskById(id: number): Promise<Task | NotFoundException> {
+    const found = await this.prismaService.task.deleteMany({ where: { id } });
+
+    return this.foundOrNot(found[0], `There is no task with id ${id}`);
+  }
+
+  async updateTaskStatus(
+    id: number,
+    status: TaskStatus
+  ): Promise<Task | NotFoundException> {
+    const found = await this.prismaService.task.updateMany({
+      where: { id },
+      data: { status }
+    });
+    return this.foundOrNot(
+      found[0],
+      `There is no task with id ${id} to update`
+    );
+  }
+
+  foundOrNot(
+    task: Task | null | undefined,
+    message: string
+  ): Task | NotFoundException {
+    if (!task) {
+      throw new NotFoundException(message);
     }
-    return found;
+    return task;
   }
-
-  async createTask({ title, description }: CreateTaskDto) {
-   await this.prismaService.task.create({data: {title, description, status: TaskStatus.OPEN}})
-  }
-
-  // deleteTaskById(id: string): Task {
-  //   const found = this.getTaskById(id);
-  //   const index = this.tasks.findIndex((task) => task.id === found.id);
-  //   return this.tasks.splice(index, 1)[0];
-  // }
-
-  // updateTaskStatus(id: string, status: TaskStatus): Task {
-  //   const task = this.getTaskById(id);
-  //   task.status = status;
-  //   return task;
-  // }
 }

@@ -1,4 +1,4 @@
-import { TaskStatus } from "../task-status.enum";
+import { TaskStatus } from "@prisma/client";
 import { IsOptional, IsIn, IsNotEmpty } from "class-validator";
 
 export class GetTasksFilterDto {
