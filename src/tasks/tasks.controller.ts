@@ -9,14 +9,14 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
-  ParseIntPipe,
-} from '@nestjs/common';
-import { TasksService } from './tasks.service';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
-import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipes';
+  ParseIntPipe
+} from "@nestjs/common";
+import { TasksService } from "./tasks.service";
+import { CreateTaskDto } from "./dto/create-task.dto";
+import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
+import { TaskStatusValidationPipe } from "./pipes/task-status-validation.pipes";
 
-@Controller('tasks')
+@Controller("tasks")
 export class TasksController {
   constructor(private taskService: TasksService) {}
 
@@ -28,14 +28,14 @@ export class TasksController {
   // }
 
   // @Get('/:id')
-  // getTaskById(@Param('id', ParseIntPipe)  id: number) {    
-    
+  // getTaskById(@Param('id', ParseIntPipe)  id: number) {
+
   // }
 
   @Post()
   @UsePipes(ValidationPipe)
- createTask(createTaskDto: CreateTaskDto) {
-    return this.taskService.createTask(createTaskDto);
+  createTask(@Body() body: CreateTaskDto) {
+    return this.taskService.createTask(body);
   }
 
   // @Delete('/:id')
