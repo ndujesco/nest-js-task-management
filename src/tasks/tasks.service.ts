@@ -8,9 +8,19 @@ import { Task, TaskStatus } from "@prisma/client";
 export class TasksService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getTasks({status,}: GetTasksFilterDto) {
-    const tasks = await this.prismaService.task
-    return {tasks}
+  async getTasks({status, search}: GetTasksFilterDto) {
+    let tasks = await this.prismaService.task.findMany();
+    if (status) {
+      tasks = tasks.filter((task) => task.status === status);
+    }
+    if (search) {
+      tasks = tasks.filter(
+        (task) =>
+          task.description.includes(search) || task.title.includes(search),
+      );
+      
+    }
+    return tasks;
   }
 
   // getAllTasks(): Task[] {
