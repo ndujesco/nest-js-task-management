@@ -22,3 +22,9 @@ enum TaskStatus {
   IN_PROGRESS
   DONE
 }
+
+model User {
+  id                    Int     @id @default(autoincrement())
+  name              String
+  password          String
+}
