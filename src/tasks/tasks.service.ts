@@ -48,7 +48,7 @@ export class TasksService {
 
   async createTask({ title, description }: CreateTaskDto): Promise<Task> {
     const created = await this.prismaService.task.create({
-      data: { title, description, status: TaskStatus.OPEN }
+      data: { title, description, userId: 1, status: TaskStatus.OPEN }
     });
     return created;
   }
