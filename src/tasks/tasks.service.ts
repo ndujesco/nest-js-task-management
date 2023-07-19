@@ -43,8 +43,9 @@ export class TasksService {
   //   return tasks;
   // }
 
-  async getTaskById(id: number) {
-    const found = await this.prismaService.task.findUnique({ where: { id } });
+  async getTaskById(id: number, user: User) {
+    const found = await this.prismaService.task.findFirst({ where: { id, userId: user.id } });
+    
     return this.foundOrNot(found, `There is no task with id ${id}`);
   }
 
@@ -66,9 +67,11 @@ export class TasksService {
     return this.foundOrNot(found.count, `There is no task with id ${id}`);
   }
 
-  async updateTaskStatus(id: number, status: TaskStatus) {
+  
+  async updateTaskStatus(id: number, status: TaskStatus, user: User) {
+    const task = await this.getTaskById(id, user);
     const found = (await this.prismaService.task.updateMany({
-      where: { id },
+      where: { id: task.id },
       data: { status }
     })) as { count: number };
 
