@@ -7,5 +7,15 @@ import { hash, compare } from "bcryptjs";
 export class AuthService {
   constructor(private readonly prismaService: PrismaService) {}
 
-    
+    async signUp({username, password}: AuthCredentialsDto) {
+      let user;
+      const hashedPassowrd = await hash(password, 10);
+      try { 
+      user = await this.prismaService.user.create({data: {username, password: hashedPassowrd}})
+        
+      } catch (err) {
+        return err.code 
+      }
+      return user;
+    }
 }
