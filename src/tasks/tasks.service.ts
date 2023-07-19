@@ -2,14 +2,16 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
 import { PrismaService } from "src/prisma/prisma.service";
-import { Task, TaskStatus } from "@prisma/client";
+import { Task, TaskStatus, User } from "@prisma/client";
 
 @Injectable()
 export class TasksService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getTasks({ status, search }: GetTasksFilterDto) {
-    let tasks = await this.prismaService.task.findMany();
+    let tasks = await this.prismaService.task.findMany({
+      include: { user: true }
+    });
     if (status) {
       tasks = tasks.filter((task) => task.status === status);
     }
@@ -46,9 +48,12 @@ export class TasksService {
     return this.foundOrNot(found, `There is no task with id ${id}`);
   }
 
-  async createTask({ title, description }: CreateTaskDto): Promise<Task> {
+  async createTask(
+    { title, description }: CreateTaskDto,
+    user: User
+  ): Promise<Task> {
     const created = await this.prismaService.task.create({
-      data: { title, description, userId: 1, status: TaskStatus.OPEN }
+      data: { title, description, userId: user.id, status: TaskStatus.OPEN }
     });
     return created;
   }
@@ -78,6 +83,6 @@ export class TasksService {
       throw new NotFoundException(message);
     }
     if (task !== 1) return task; //
-    return {task}
+    return { task };
   }
 }

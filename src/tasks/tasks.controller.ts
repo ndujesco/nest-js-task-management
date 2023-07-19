@@ -16,8 +16,9 @@ import { TasksService } from "./tasks.service";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
 import { TaskStatusValidationPipe } from "./pipes/task-status-validation.pipes";
-import { TaskStatus } from "@prisma/client";
+import { TaskStatus, User } from "@prisma/client";
 import { AuthGuard } from "@nestjs/passport";
+import { GetUser } from "src/user/auth/get-user.decorator";
 // import { Task, TaskStatus } from "@prisma/client";
 
 @Controller("tasks")
@@ -37,8 +38,11 @@ export class TasksController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  createTask(@Body() body: CreateTaskDto) {
-    return this.taskService.createTask(body);
+  createTask(
+    @Body() body: CreateTaskDto,
+    @GetUser() user: User
+    ) {
+    return this.taskService.createTask(body, user);
   }
 
   @Delete("/:id")
