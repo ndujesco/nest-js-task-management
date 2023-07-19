@@ -8,8 +8,8 @@ import { Task, TaskStatus, User } from "@prisma/client";
 export class TasksService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getTasks({ status, search }: GetTasksFilterDto) {
-    let tasks = await this.prismaService.task.findMany({
+  async getTasks({ status, search }: GetTasksFilterDto, user: User) {
+    let tasks = await this.prismaService.task.findMany({ where: {userId: user.id},
       include: { user: true }
     });
     if (status) {
@@ -53,7 +53,7 @@ export class TasksService {
     user: User
   ): Promise<Task> {
     const created = await this.prismaService.task.create({
-      data: { title, description, userId: user.id, status: TaskStatus.OPEN }
+      data: { title, description, userId: user.id, status: TaskStatus.OPEN }, 
     });
     return created;
   }
