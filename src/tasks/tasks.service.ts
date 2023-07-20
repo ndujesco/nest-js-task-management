@@ -59,19 +59,22 @@ export class TasksService {
     return created;
   }
 
-  async deleteTaskById(id: number) {
+  async deleteTaskById(id: number, user: User) {
+    const task = await this.getTaskById(id, user);
+
     const found = (await this.prismaService.task.deleteMany({
-      where: { id }
+      where: { id: ( task as Task).id },
     })) as { count: number };
 
     return this.foundOrNot(found.count, `There is no task with id ${id}`);
   }
 
-  
+
   async updateTaskStatus(id: number, status: TaskStatus, user: User) {
     const task = await this.getTaskById(id, user);
+    
     const found = (await this.prismaService.task.updateMany({
-      where: { id: task.id },
+      where: { id: ( task as Task).id },
       data: { status }
     })) as { count: number };
 
