@@ -18,7 +18,7 @@ import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
 import { TaskStatusValidationPipe } from "./pipes/task-status-validation.pipes";
 import { TaskStatus, User } from "@prisma/client";
 import { AuthGuard } from "@nestjs/passport";
-import { GetUser } from "src/user/auth/get-user.decorator";
+import { GetUser } from "../user/auth/get-user.decorator";
 // import { Task, TaskStatus } from "@prisma/client";
 
 @Controller("tasks")
